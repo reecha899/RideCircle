@@ -39,8 +39,10 @@ export default function UserCard({ match, onChatClick, onProfileClick }: UserCar
                 <h3 className="text-xl font-semibold text-gray-900">{user.name}</h3>
                 {user.verified && (
                   <div className="group relative">
-                    <Shield className="w-5 h-5 text-blue-600" />
-                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                    <div className="bg-blue-600 rounded-full p-1 flex items-center justify-center">
+                      <Shield className="w-4 h-4 text-white fill-white" />
+                    </div>
+                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
                       Verified
                     </span>
                   </div>
@@ -49,8 +51,9 @@ export default function UserCard({ match, onChatClick, onProfileClick }: UserCar
               <p className="text-sm text-gray-500">{user.age} years • {user.gender}</p>
             </div>
           </div>
-          <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
-            {match.matchScore}% match
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md border-2 border-blue-700 flex items-center gap-1.5 min-w-[110px] justify-center">
+            <span className="font-extrabold">{match.matchScore}%</span>
+            <span className="font-semibold">match</span>
           </div>
         </div>
 
