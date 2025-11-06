@@ -1,13 +1,13 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { User } from '@/types/user';
 import { ArrowLeft, MapPin, Clock, Navigation, Shield, MessageCircle, Sparkles } from 'lucide-react';
 import usersData from '@/data/users.json';
 import ChatInterface from '@/components/ChatInterface';
 
-export default function ProfilePage() {
+function ProfileContent() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -174,5 +174,20 @@ export default function ProfilePage() {
         <ChatInterface user={user} onClose={() => setShowChat(false)} />
       )}
     </>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading profile...</p>
+        </div>
+      </div>
+    }>
+      <ProfileContent />
+    </Suspense>
   );
 }

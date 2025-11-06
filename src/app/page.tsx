@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import RouteEntry from '@/components/RouteEntry';
 import MatchingResults from '@/components/MatchingResults';
@@ -12,7 +12,7 @@ import { findMatchingUsers, filterUsers } from '@/utils/matching';
 import usersData from '@/data/users.json';
 import { Users, MessageCircle, Map } from 'lucide-react';
 
-export default function Home() {
+function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentRoute, setCurrentRoute] = useState<{ from: string; to: string } | null>(null);
@@ -127,117 +127,134 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-12 h-12 rounded-xl flex items-center justify-center font-bold text-xl">
-                RC
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">RideCircle</h1>
-                <p className="text-sm text-gray-500">Connect with your commute community</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                <span>{usersData.length} Commuters</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {!currentRoute ? (
-          // Initial State - Route Entry
-          <div className="text-center py-16">
-            <div className="mb-8">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Find Your Commute Buddies
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Connect with people who share your daily route. Carpool, chat, or simply make new friends on your commute!
-              </p>
-            </div>
-            <RouteEntry onRouteSubmit={handleRouteSubmit} />
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <div className="bg-white rounded-xl p-6 shadow-md">
-                <Map className="w-8 h-8 text-blue-600 mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">Route Matching</h3>
-                <p className="text-sm text-gray-600">
-                  Find commuters with overlapping routes automatically
-                </p>
-              </div>
-              <div className="bg-white rounded-xl p-6 shadow-md">
-                <MessageCircle className="w-8 h-8 text-blue-600 mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">AI Chat Assist</h3>
-                <p className="text-sm text-gray-600">
-                  Chat with AI assistants to connect with other commuters
-                </p>
-              </div>
-              <div className="bg-white rounded-xl p-6 shadow-md">
-                <Users className="w-8 h-8 text-blue-600 mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">Community Building</h3>
-                <p className="text-sm text-gray-600">
-                  Build connections and reduce isolation in your daily commute
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          // Results View
-          <div className="space-y-6">
-            {/* Route Info & Map */}
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <div className="flex items-center justify-between mb-4">
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white w-12 h-12 rounded-xl flex items-center justify-center font-bold text-xl">
+                  RC
+                </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Route</h2>
-                  <p className="text-gray-600">
-                    {currentRoute.from} → {currentRoute.to}
+                  <h1 className="text-2xl font-bold text-gray-900">RideCircle</h1>
+                  <p className="text-sm text-gray-500">Connect with your commute community</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  <span>{usersData.length} Commuters</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main className="max-w-7xl mx-auto px-4 py-8">
+          {!currentRoute ? (
+            // Initial State - Route Entry
+            <div className="text-center py-16">
+              <div className="mb-8">
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                  Find Your Commute Buddies
+                </h2>
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                  Connect with people who share your daily route. Carpool, chat, or simply make new friends on your commute!
+                </p>
+              </div>
+              <RouteEntry onRouteSubmit={handleRouteSubmit} />
+              <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="bg-white rounded-xl p-6 shadow-md">
+                  <Map className="w-8 h-8 text-blue-600 mb-3" />
+                  <h3 className="font-semibold text-gray-900 mb-2">Route Matching</h3>
+                  <p className="text-sm text-gray-600">
+                    Find commuters with overlapping routes automatically
                   </p>
                 </div>
-                <button
-                  onClick={() => {
-                    setCurrentRoute(null);
-                    setMatches([]);
-                    setFilteredMatches([]);
-                    setFilters({});
-                    router.push('/');
-                  }}
-                  className="text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  Change Route
-                </button>
+                <div className="bg-white rounded-xl p-6 shadow-md">
+                  <MessageCircle className="w-8 h-8 text-blue-600 mb-3" />
+                  <h3 className="font-semibold text-gray-900 mb-2">AI Chat Assist</h3>
+                  <p className="text-sm text-gray-600">
+                    Chat with AI assistants to connect with other commuters
+                  </p>
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-md">
+                  <Users className="w-8 h-8 text-blue-600 mb-3" />
+                  <h3 className="font-semibold text-gray-900 mb-2">Community Building</h3>
+                  <p className="text-sm text-gray-600">
+                    Build connections and reduce isolation in your daily commute
+                  </p>
+                </div>
               </div>
-              <RouteMap from={currentRoute.from} to={currentRoute.to} />
             </div>
+          ) : (
+            // Results View
+            <div className="space-y-6">
+              {/* Route Info & Map */}
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Route</h2>
+                    <p className="text-gray-600">
+                      {currentRoute.from} → {currentRoute.to}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setCurrentRoute(null);
+                      setMatches([]);
+                      setFilteredMatches([]);
+                      setFilters({});
+                      router.push('/');
+                    }}
+                    className="text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    Change Route
+                  </button>
+                </div>
+                <RouteMap from={currentRoute.from} to={currentRoute.to} />
+              </div>
 
-            {/* Filters & Results Header */}
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-gray-900">
-                Found {filteredMatches.length} {filteredMatches.length === 1 ? 'Match' : 'Matches'}
-              </h3>
-              <Filters onFilterChange={handleFilterChange} initialFilters={filters} />
+              {/* Filters & Results Header */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Found {filteredMatches.length} {filteredMatches.length === 1 ? 'Match' : 'Matches'}
+                </h3>
+                <Filters onFilterChange={handleFilterChange} initialFilters={filters} />
+              </div>
+
+              {/* Matching Results */}
+              <MatchingResults
+                matches={filteredMatches}
+                onChatClick={handleChatClick}
+                onProfileClick={handleProfileClick}
+              />
             </div>
+          )}
+        </main>
 
-            {/* Matching Results */}
-            <MatchingResults
-              matches={filteredMatches}
-              onChatClick={handleChatClick}
-              onProfileClick={handleProfileClick}
-            />
-          </div>
+        {/* Chat Interface */}
+        {selectedChatUser && (
+          <ChatInterface user={selectedChatUser} onClose={handleCloseChat} />
         )}
-      </main>
+      </div>
+    </>
+  );
+}
 
-      {/* Chat Interface */}
-      {selectedChatUser && (
-        <ChatInterface user={selectedChatUser} onClose={handleCloseChat} />
-      )}
-    </div>
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }
