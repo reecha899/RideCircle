@@ -16,18 +16,15 @@ export default function UserProfile({ onUpdate, currentUser: propCurrentUser }: 
   const [showEditForm, setShowEditForm] = useState(false);
   const [internalUser, setInternalUser] = useState<User | null>(null);
 
-  // Use prop if provided, otherwise use internal state
   const currentUser = propCurrentUser !== undefined ? propCurrentUser : internalUser;
 
   useEffect(() => {
     if (propCurrentUser === undefined) {
-      // Only load from storage if prop is not provided
       const user = getCurrentUser();
       setInternalUser(user);
     }
   }, [propCurrentUser]);
 
-  // Listen for storage changes from other tabs/windows
   useEffect(() => {
     const handleStorageChange = () => {
       const user = getCurrentUser();

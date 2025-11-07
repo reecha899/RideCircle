@@ -27,11 +27,9 @@ function HomeContent() {
   const [showRegistration, setShowRegistration] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  // Load current user on mount and show registration if first visit
   useEffect(() => {
     const user = getCurrentUser();
     setCurrentUser(user);
-    // Show registration form on first visit if no user exists
     const hasSeenWelcome = localStorage.getItem('ridecircle_welcome_seen');
     if (!user && !hasSeenWelcome) {
       setShowRegistration(true);
@@ -39,7 +37,6 @@ function HomeContent() {
     }
   }, []);
 
-  // Restore state from URL on mount
   useEffect(() => {
     if (isInitialized) return;
     
@@ -52,7 +49,6 @@ function HomeContent() {
       const foundMatches = findMatchingUsers(route, usersData as User[]);
       setMatches(foundMatches);
       
-      // Restore filters from URL
       const restoredFilters: any = {};
       const verified = searchParams.get('verified');
       if (verified !== null) restoredFilters.verified = verified === 'true';
@@ -73,7 +69,6 @@ function HomeContent() {
     setIsInitialized(true);
   }, [searchParams, isInitialized]);
 
-  // Update URL when route or filters change
   const updateURL = (route: { from: string; to: string } | null, filterState: any) => {
     if (!route) {
       router.push('/');
@@ -107,22 +102,17 @@ function HomeContent() {
     setCurrentRoute(route);
     const foundMatches = findMatchingUsers(route, usersData as User[]);
     setMatches(foundMatches);
-    // Reset filters when route changes
     const emptyFilters = {};
     setFilters(emptyFilters);
-    // Apply any existing filters to the new matches
     const filtered = filterUsers(foundMatches, emptyFilters);
     setFilteredMatches(filtered);
-    // Update URL
     updateURL(route, emptyFilters);
   };
 
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
-    // Always filter from the original matches, not filteredMatches
     const filtered = filterUsers(matches, newFilters);
     setFilteredMatches(filtered);
-    // Update URL with new filters
     if (currentRoute) {
       updateURL(currentRoute, newFilters);
     }
@@ -133,7 +123,6 @@ function HomeContent() {
   };
 
   const handleProfileClick = (user: User) => {
-    // Preserve current search params when navigating to profile
     const currentParams = searchParams.toString();
     const url = currentParams ? `/profile/${user.id}?${currentParams}` : `/profile/${user.id}`;
     router.push(url);
@@ -147,7 +136,6 @@ function HomeContent() {
     saveCurrentUser(user);
     setCurrentUser(user);
     setShowRegistration(false);
-    // Force update to ensure UserProfile component reflects the change
     handleUserUpdate(user);
   };
 
@@ -162,7 +150,6 @@ function HomeContent() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
@@ -188,7 +175,6 @@ function HomeContent() {
 
         <main className="max-w-7xl mx-auto px-4 py-8">
           {!currentRoute ? (
-            // Initial State - Route Entry
             <div className="text-center py-16">
               <div className="mb-8">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -224,9 +210,7 @@ function HomeContent() {
               </div>
             </div>
           ) : (
-            // Results View
             <div className="space-y-6">
-              {/* Route Info & Map */}
               <div className="bg-white rounded-xl shadow-md p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -251,7 +235,6 @@ function HomeContent() {
                 <RouteMap from={currentRoute.from} to={currentRoute.to} />
               </div>
 
-              {/* Filters & Results Header */}
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-semibold text-gray-900">
                   Found {filteredMatches.length} {filteredMatches.length === 1 ? 'Match' : 'Matches'}
@@ -259,7 +242,6 @@ function HomeContent() {
                 <Filters onFilterChange={handleFilterChange} initialFilters={filters} />
               </div>
 
-              {/* Matching Results */}
               <MatchingResults
                 matches={filteredMatches}
                 onChatClick={handleChatClick}
@@ -269,13 +251,11 @@ function HomeContent() {
           )}
         </main>
 
-        {/* Chat Interface */}
         {selectedChatUser && (
           <ChatInterface user={selectedChatUser} onClose={handleCloseChat} />
         )}
       </div>
 
-      {/* Registration Form */}
       {showRegistration && (
         <RegistrationForm
           onComplete={handleRegistrationComplete}
