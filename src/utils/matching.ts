@@ -10,44 +10,21 @@ export function findMatchingUsers(
   allUsers.forEach((user) => {
     if (currentUserId && user.id === currentUserId) return;
 
-    const hasRouteOverlap =
-      (user.from.toLowerCase() === currentRoute.from.toLowerCase() &&
-        user.to.toLowerCase() === currentRoute.to.toLowerCase()) ||
-      (user.from.toLowerCase() === currentRoute.from.toLowerCase()) ||
-      (user.to.toLowerCase() === currentRoute.to.toLowerCase());
+    const isExactMatch =
+      user.from.toLowerCase() === currentRoute.from.toLowerCase() &&
+      user.to.toLowerCase() === currentRoute.to.toLowerCase();
 
-    if (hasRouteOverlap) {
-      let matchScore = 0;
-      const routeOverlap: string[] = [];
-
-      if (
-        user.from.toLowerCase() === currentRoute.from.toLowerCase() &&
-        user.to.toLowerCase() === currentRoute.to.toLowerCase()
-      ) {
-        matchScore += 50;
-        routeOverlap.push('Exact route match');
-      } else if (user.from.toLowerCase() === currentRoute.from.toLowerCase()) {
-        matchScore += 20;
-        routeOverlap.push('Same starting point');
-      } else if (user.to.toLowerCase() === currentRoute.to.toLowerCase()) {
-        matchScore += 20;
-        routeOverlap.push('Same destination');
-      }
-
-      if (user.verified) {
-        matchScore += 10;
-      }
-
+    if (isExactMatch) {
       matches.push({
         user,
-        matchScore,
+        matchScore: 0,
         commonInterests: [],
-        routeOverlap: routeOverlap.join(', '),
+        routeOverlap: '',
       });
     }
   });
 
-  return matches.sort((a, b) => b.matchScore - a.matchScore);
+  return matches;
 }
 
 export function filterUsers(

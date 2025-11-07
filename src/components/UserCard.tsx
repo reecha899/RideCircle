@@ -50,10 +50,6 @@ export default function UserCard({ match, onChatClick, onProfileClick }: UserCar
               <p className="text-sm text-gray-500">{user.age} years • {user.gender}</p>
             </div>
           </div>
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md border-2 border-blue-700 flex items-center gap-1.5 min-w-[110px] justify-center">
-            <span className="font-extrabold">{match.matchScore}%</span>
-            <span className="font-semibold">match</span>
-          </div>
         </div>
 
         <p className="text-gray-700 mb-4 line-clamp-2">{user.bio}</p>
@@ -72,11 +68,6 @@ export default function UserCard({ match, onChatClick, onProfileClick }: UserCar
             <Navigation className="w-4 h-4" />
             <span>{user.routeDistance}</span>
           </div>
-          {match.routeOverlap && (
-            <div className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-              {match.routeOverlap}
-            </div>
-          )}
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
