@@ -11,6 +11,9 @@ import { User, RouteMatch } from '@/types/user';
 import { findMatchingUsers, filterUsers } from '@/utils/matching';
 import usersData from '@/data/users.json';
 import { Users, MessageCircle, Map } from 'lucide-react';
+import RegistrationForm from '@/components/RegistrationForm';
+import UserProfile from '@/components/UserProfile';
+import { getCurrentUser, saveCurrentUser } from '@/utils/storage';
 
 function HomeContent() {
   const router = useRouter();
@@ -21,6 +24,20 @@ function HomeContent() {
   const [selectedChatUser, setSelectedChatUser] = useState<User | null>(null);
   const [filters, setFilters] = useState<any>({});
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // Load current user on mount and show registration if first visit
+  useEffect(() => {
+    const user = getCurrentUser();
+    setCurrentUser(user);
+    // Show registration form on first visit if no user exists
+    const hasSeenWelcome = localStorage.getItem('ridecircle_welcome_seen');
+    if (!user && !hasSeenWelcome) {
+      setShowRegistration(true);
+      localStorage.setItem('ridecircle_welcome_seen', 'true');
+    }
+  }, []);
 
   // Restore state from URL on mount
   useEffect(() => {
@@ -126,6 +143,22 @@ function HomeContent() {
     setSelectedChatUser(null);
   };
 
+  const handleRegistrationComplete = (user: User) => {
+    saveCurrentUser(user);
+    setCurrentUser(user);
+    setShowRegistration(false);
+    // Force update to ensure UserProfile component reflects the change
+    handleUserUpdate(user);
+  };
+
+  const handleRegistrationSkip = () => {
+    setShowRegistration(false);
+  };
+
+  const handleUserUpdate = (user: User | null) => {
+    setCurrentUser(user);
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -142,12 +175,13 @@ function HomeContent() {
                   <p className="text-sm text-gray-500">Connect with your commute community</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  <span>{usersData.length} Commuters</span>
-                </div>
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                <span>{usersData.length} Commuters</span>
               </div>
+              <UserProfile onUpdate={handleUserUpdate} currentUser={currentUser} />
+            </div>
             </div>
           </div>
         </header>
@@ -240,6 +274,14 @@ function HomeContent() {
           <ChatInterface user={selectedChatUser} onClose={handleCloseChat} />
         )}
       </div>
+
+      {/* Registration Form */}
+      {showRegistration && (
+        <RegistrationForm
+          onComplete={handleRegistrationComplete}
+          onSkip={handleRegistrationSkip}
+        />
+      )}
     </>
   );
 }
