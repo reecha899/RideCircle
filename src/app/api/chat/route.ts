@@ -21,12 +21,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if API key exists
     const apiKey = process.env.OPENAI_API_KEY;
     
     if (!apiKey || apiKey.trim() === '') {
       console.warn('OPENAI_API_KEY is not set in environment variables');
-      // Use smart fallback
       const fallbackResponse = generateFallbackFromMessage(message, targetUser);
       return NextResponse.json({
         response: fallbackResponse,
@@ -35,12 +33,10 @@ export async function POST(request: NextRequest) {
 
     console.log('OpenAI API Key found, initializing client and making API call...');
     
-    // Initialize OpenAI client inside the function to ensure env vars are loaded
     const openai = new OpenAI({
       apiKey: apiKey,
     });
 
-    // Build context about the user - ChatGPT-like system prompt
     const userContext = `
 You are an intelligent AI assistant representing ${targetUser.name} on RideCircle, a commuter networking platform. Your role is to help people connect with ${targetUser.name} for carpooling, commuting, or building community.
 
@@ -69,7 +65,6 @@ INSTRUCTIONS:
 Remember: You are speaking on behalf of ${targetUser.name}, so use "I" or "${targetUser.name}" appropriately in your responses.
 `;
 
-    // Build conversation history
     const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
       {
         role: 'system',
@@ -77,7 +72,6 @@ Remember: You are speaking on behalf of ${targetUser.name}, so use "I" or "${tar
       },
     ];
 
-    // Add conversation history
     conversationHistory.forEach((msg: Message) => {
       messages.push({
         role: msg.sender === 'user' ? 'user' : 'assistant',
@@ -85,21 +79,19 @@ Remember: You are speaking on behalf of ${targetUser.name}, so use "I" or "${tar
       });
     });
 
-    // Add current message
     messages.push({
       role: 'user',
       content: message,
     });
 
-    // Call OpenAI API
     try {
       console.log('Making OpenAI API call with message:', message.substring(0, 50) + '...');
       
       const completion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: messages,
-        temperature: 0.8, // Slightly higher for more natural responses
-        max_tokens: 300, // Increased for more detailed responses
+        temperature: 0.8,
+        max_tokens: 300,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
@@ -119,7 +111,6 @@ Remember: You are speaking on behalf of ${targetUser.name}, so use "I" or "${tar
         error: openaiError,
       });
       
-      // If it's an API key issue, use fallback
       if (openaiError?.status === 401 || openaiError?.code === 'invalid_api_key' || openaiError?.message?.includes('401')) {
         console.error('Invalid API key or authentication failed');
         const fallbackResponse = generateFallbackFromMessage(message, targetUser);
@@ -128,7 +119,6 @@ Remember: You are speaking on behalf of ${targetUser.name}, so use "I" or "${tar
         });
       }
       
-      // For other errors, also use fallback with contextual response
       console.warn('Using fallback response due to API error:', openaiError?.message || 'Unknown error');
       const fallbackResponse = generateFallbackFromMessage(message || '', targetUser);
       return NextResponse.json({
@@ -139,7 +129,6 @@ Remember: You are speaking on behalf of ${targetUser.name}, so use "I" or "${tar
     console.error('General API Error:', error);
     console.error('Error details:', JSON.stringify(error, null, 2));
     
-    // Use fallback response generator for better context
     if (targetUser && message) {
       const fallbackResponse = generateFallbackFromMessage(message, targetUser);
       return NextResponse.json({
@@ -147,7 +136,6 @@ Remember: You are speaking on behalf of ${targetUser.name}, so use "I" or "${tar
       }, { status: 200 });
     }
     
-    // If we have targetUser but no message, give a general response
     if (targetUser) {
       return NextResponse.json({
         response: `Hi! I'm ${targetUser.name}'s AI assistant. ${targetUser.name} commutes from ${targetUser.from} to ${targetUser.to} and is interested in ${targetUser.interests.slice(0, 2).join(' and ')}. How can I help you connect?`,
@@ -160,7 +148,6 @@ Remember: You are speaking on behalf of ${targetUser.name}, so use "I" or "${tar
   }
 }
 
-// Fallback response generator
 function generateFallbackFromMessage(userMessage: string, targetUser: User): string {
   if (!userMessage || !userMessage.trim()) {
     return `Hi! I'm ${targetUser.name}'s AI assistant. ${targetUser.name} commutes from ${targetUser.from} to ${targetUser.to} and is interested in ${targetUser.interests.slice(0, 2).join(' and ')}. How can I help you connect?`;
@@ -168,7 +155,6 @@ function generateFallbackFromMessage(userMessage: string, targetUser: User): str
   
   const lowerMessage = userMessage.toLowerCase().trim();
   
-  // Location/Where questions - handle variations (check for "coming" first as it's more specific)
   if (lowerMessage.includes('coming') || lowerMessage.includes('from where')) {
     return `${targetUser.name} is from ${targetUser.from} and commutes to ${targetUser.to} every day. They usually leave at ${targetUser.commuteTime} and the route is about ${targetUser.routeDistance}. Would you like to coordinate a carpool?`;
   }
@@ -180,32 +166,26 @@ function generateFallbackFromMessage(userMessage: string, targetUser: User): str
     return `${targetUser.name} commutes from ${targetUser.from} to ${targetUser.to}. They usually leave at ${targetUser.commuteTime} and the route is about ${targetUser.routeDistance}. Would you like to coordinate a carpool?`;
   }
   
-  // Time questions
   if (lowerMessage.includes('time') || lowerMessage.includes('when') || lowerMessage.includes('schedule') || lowerMessage.includes('leave')) {
     return `${targetUser.name} typically leaves at ${targetUser.commuteTime} for their commute from ${targetUser.from} to ${targetUser.to}. The route is ${targetUser.routeDistance}. Would you like to coordinate a similar schedule?`;
   }
   
-  // Distance questions
   if (lowerMessage.includes('distance') || lowerMessage.includes('how far') || lowerMessage.includes('km')) {
     return `The commute from ${targetUser.from} to ${targetUser.to} is about ${targetUser.routeDistance}. ${targetUser.name} makes this trip daily at ${targetUser.commuteTime}.`;
   }
   
-  // Interest questions
   if (lowerMessage.includes('interest') || lowerMessage.includes('hobby') || lowerMessage.includes('like')) {
     return `${targetUser.name} enjoys ${targetUser.interests.join(', ')}. Maybe you could discuss ${targetUser.interests[0]} together during your commute!`;
   }
   
-  // About/Bio questions
   if (lowerMessage.includes('about') || lowerMessage.includes('bio') || lowerMessage.includes('who') || lowerMessage.includes('tell me')) {
     return `${targetUser.name} is ${targetUser.bio} They commute from ${targetUser.from} to ${targetUser.to} and are interested in ${targetUser.interests.slice(0, 3).join(', ')}.`;
   }
   
-  // Greeting
   if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
     return `Hi! I'm ${targetUser.name}'s AI assistant. ${targetUser.name} commutes from ${targetUser.from} to ${targetUser.to} and is interested in ${targetUser.interests.slice(0, 2).join(' and ')}. How can I help you connect?`;
   }
   
-  // Default contextual response
   return `${targetUser.name} commutes from ${targetUser.from} to ${targetUser.to} daily at ${targetUser.commuteTime}. They're interested in ${targetUser.interests.slice(0, 2).join(' and ')}. Would you like to know more about coordinating a ride?`;
 }
 

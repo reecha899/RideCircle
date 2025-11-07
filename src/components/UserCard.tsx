@@ -25,7 +25,6 @@ export default function UserCard({ match, onChatClick, onProfileClick }: UserCar
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  // Fallback to initials
                   target.style.display = 'none';
                   const parent = target.parentElement;
                   if (parent) {

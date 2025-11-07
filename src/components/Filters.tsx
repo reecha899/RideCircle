@@ -29,11 +29,9 @@ export default function Filters({ onFilterChange, initialFilters }: FiltersProps
   const filterRef = useRef<HTMLDivElement>(null);
   const prevInitialFiltersRef = useRef<string>('');
 
-  // Sync filters when initialFilters change (e.g., from URL restore)
   useEffect(() => {
     if (initialFilters !== undefined) {
       const currentStr = JSON.stringify(initialFilters);
-      // Only update if initialFilters actually changed
       if (prevInitialFiltersRef.current !== currentStr) {
         prevInitialFiltersRef.current = currentStr;
         setFilters(initialFilters);
@@ -41,7 +39,6 @@ export default function Filters({ onFilterChange, initialFilters }: FiltersProps
     }
   }, [initialFilters]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
@@ -61,7 +58,6 @@ export default function Filters({ onFilterChange, initialFilters }: FiltersProps
   const handleFilterChange = (key: keyof FilterState, value: any) => {
     const newFilters = { ...filters };
     
-    // If value is undefined, empty string, or empty array, remove the key
     if (value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) {
       delete newFilters[key];
     } else {
@@ -110,7 +106,6 @@ export default function Filters({ onFilterChange, initialFilters }: FiltersProps
           </div>
 
           <div className="space-y-4">
-            {/* Verified Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Verification
@@ -131,7 +126,6 @@ export default function Filters({ onFilterChange, initialFilters }: FiltersProps
               </select>
             </div>
 
-            {/* Gender Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Gender
@@ -149,7 +143,6 @@ export default function Filters({ onFilterChange, initialFilters }: FiltersProps
               </select>
             </div>
 
-            {/* Age Range */}
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -187,7 +180,6 @@ export default function Filters({ onFilterChange, initialFilters }: FiltersProps
               </div>
             </div>
 
-            {/* Interests */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Interests
@@ -216,7 +208,6 @@ export default function Filters({ onFilterChange, initialFilters }: FiltersProps
               </div>
             </div>
 
-            {/* Clear Filters */}
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}

@@ -48,7 +48,6 @@ export default function ChatInterface({ user, onClose }: ChatInterfaceProps) {
     setIsLoading(true);
 
     try {
-      // Pass conversation history (all previous messages) to maintain context
       const aiResponse = await generateAIResponse(input, user, messages);
       if (aiResponse && aiResponse.trim()) {
         const botMessage: Message = {
@@ -63,7 +62,6 @@ export default function ChatInterface({ user, onClose }: ChatInterfaceProps) {
       }
     } catch (error) {
       console.error('Error generating AI response:', error);
-      // Add a helpful error message that still provides context
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: `I apologize, but I'm having trouble processing your request right now. ${user.name} commutes from ${user.from} to ${user.to} at ${user.commuteTime}. Would you like to try asking again?`,
@@ -78,7 +76,6 @@ export default function ChatInterface({ user, onClose }: ChatInterfaceProps) {
 
   return (
     <div className="fixed bottom-0 right-0 w-full md:w-96 h-[600px] bg-white border border-gray-200 rounded-t-xl shadow-2xl flex flex-col z-50">
-      {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-xl flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white">
@@ -109,7 +106,6 @@ export default function ChatInterface({ user, onClose }: ChatInterfaceProps) {
         </button>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
         {messages.map((message) => (
           <div
@@ -162,7 +158,6 @@ export default function ChatInterface({ user, onClose }: ChatInterfaceProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
       <form onSubmit={handleSend} className="p-4 border-t border-gray-200 bg-white">
         <div className="flex gap-2">
           <input

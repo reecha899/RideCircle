@@ -22,7 +22,6 @@ function ProfileContent() {
   }, [params.id]);
 
   const handleBack = () => {
-    // Preserve search params when going back
     const currentParams = searchParams.toString();
     const url = currentParams ? `/?${currentParams}` : '/';
     router.push(url);
@@ -40,7 +39,6 @@ function ProfileContent() {
     <>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="max-w-4xl mx-auto px-4 py-8">
-          {/* Back Button */}
           <button
             onClick={handleBack}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
@@ -49,9 +47,7 @@ function ProfileContent() {
             <span>Back to Results</span>
           </button>
 
-          {/* Profile Card */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            {/* Header */}
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-6">
@@ -95,15 +91,12 @@ function ProfileContent() {
               </div>
             </div>
 
-            {/* Content */}
             <div className="p-8">
-              {/* Bio */}
               <div className="mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-3">About</h2>
                 <p className="text-gray-700 leading-relaxed">{user.bio}</p>
               </div>
 
-              {/* Route Info */}
               <div className="mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Commute Route</h2>
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
@@ -137,7 +130,6 @@ function ProfileContent() {
                 </div>
               </div>
 
-              {/* Interests */}
               <div className="mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-blue-600" />
@@ -155,7 +147,6 @@ function ProfileContent() {
                 </div>
               </div>
 
-              {/* Preferences */}
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Preferences</h2>
                 <div className="bg-gray-50 rounded-xl p-4">

@@ -41,14 +41,12 @@ export default function RouteEntry({ onRouteSubmit }: RouteEntryProps) {
     onRouteSubmit({ from, to });
   };
 
-  // Filter out the selected "to" location from "from" suggestions
   const filteredFromSuggestions = POPULAR_LOCATIONS.filter((loc) => {
     const matchesInput = loc.toLowerCase().includes(from.toLowerCase());
     const notSameAsTo = to === '' || loc.toLowerCase() !== to.toLowerCase();
     return matchesInput && notSameAsTo;
   });
 
-  // Filter out the selected "from" location from "to" suggestions
   const filteredToSuggestions = POPULAR_LOCATIONS.filter((loc) => {
     const matchesInput = loc.toLowerCase().includes(to.toLowerCase());
     const notSameAsFrom = from === '' || loc.toLowerCase() !== from.toLowerCase();
@@ -59,7 +57,6 @@ export default function RouteEntry({ onRouteSubmit }: RouteEntryProps) {
     setFrom(location);
     setShowFromSuggestions(false);
     setError('');
-    // If the selected "from" is the same as "to", clear "to"
     if (to.toLowerCase() === location.toLowerCase()) {
       setTo('');
     }
@@ -69,7 +66,6 @@ export default function RouteEntry({ onRouteSubmit }: RouteEntryProps) {
     setTo(location);
     setShowToSuggestions(false);
     setError('');
-    // If the selected "to" is the same as "from", clear it and show error
     if (from.toLowerCase() === location.toLowerCase()) {
       setTo('');
       setError('From and To locations cannot be the same');

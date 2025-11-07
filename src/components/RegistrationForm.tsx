@@ -155,7 +155,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Full Name <span className="text-red-500">*</span>
@@ -175,7 +174,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
           </div>
 
-          {/* Age and Gender */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -220,7 +218,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
             </div>
           </div>
 
-          {/* From Location */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               From <span className="text-red-500">*</span>
@@ -267,7 +264,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
             {errors.from && <p className="mt-1 text-sm text-red-600">{errors.from}</p>}
           </div>
 
-          {/* To Location */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               To <span className="text-red-500">*</span>
@@ -314,7 +310,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
             {errors.to && <p className="mt-1 text-sm text-red-600">{errors.to}</p>}
           </div>
 
-          {/* Commute Time and Distance */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -360,7 +355,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
             </div>
           </div>
 
-          {/* Bio */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Bio <span className="text-red-500">*</span>
@@ -380,7 +374,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
             {errors.bio && <p className="mt-1 text-sm text-red-600">{errors.bio}</p>}
           </div>
 
-          {/* Interests */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Interests <span className="text-red-500">*</span>
@@ -406,7 +399,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
             {errors.interests && <p className="mt-1 text-sm text-red-600">{errors.interests}</p>}
           </div>
 
-          {/* Preferred Gender */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Preferred Gender for Connections
@@ -422,7 +414,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
             </select>
           </div>
 
-          {/* Verified */}
           <div>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -435,7 +426,6 @@ export default function RegistrationForm({ onComplete, onSkip, existingUser }: R
             </label>
           </div>
 
-          {/* Buttons */}
           <div className="flex gap-3 pt-4">
             <button
               type="button"
